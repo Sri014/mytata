@@ -136,7 +136,7 @@ export default function Home() {
       .then(result => {
         console.log(result);
         const data = result;
-        <Message.Header>{data}</Message.Header>;
+        <Message.Header>{data}</Message.Header>
         const blob = new Blob([data], { type: 'text/plain' });
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
