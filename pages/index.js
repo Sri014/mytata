@@ -88,6 +88,7 @@ export default function Home() {
       .then(response => response.text())
       .then(result => {
         const res = JSON.parse(result);
+        
         console.log(res);
         if (res.code === 0) {
           let userDetails = res.data.userDetails;
@@ -136,6 +137,7 @@ export default function Home() {
       .then(result => {
         console.log(result);
         const data = result;
+        return <div>{data}</div>; 
         const blob = new Blob([data], { type: 'text/plain' });
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
