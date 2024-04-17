@@ -27,40 +27,55 @@ export default function Home() {
     if (tok !== undefined && userd !== undefined) {
       setToken(tok);
       setUser(JSON.parse(userd));
-      console.log(tok);
     }
   }, []);
 
-
   useEffect(() => {
     if (theUser !== null) {
-      var myHeaders = new Headers();
-      myHeaders.append("Authorization", "Bearer 59f9ccb6a5267192ea34877b62126cb7f991faca");
-      myHeaders.append("Content-Type", "application/json");
-      console.log('mko');
-      console.log(process.env.REACT_APP_M3U_FUNCTION_BASE_URL);
-      var raw = JSON.stringify({
-        "long_url": window.location.origin.replace('localhost', '127.0.0.1') + '/api/getM3u?sid=' + theUser.sid + '_' + 'A'+ '&id=' + theUser.id + '&sname=' + theUser.sName +'&tkn=' + token
-      });
+      //var myHeaders = new Headers();
+      //myHeaders.append("Authorization", "Bearer 53d037668d748648c12097863c2321ea61be9de0");
+      //myHeaders.append("Content-Type", "application/json");
+      //console.log('mko');
+      //console.log(process.env.REACT_APP_M3U_FUNCTION_BASE_URL);
+      //var raw = JSON.stringify({
+      //"long_url": window.location.origin.replace('localhost', '127.0.0.1') + '/api/getM3u?sid=' + theUser.sid + '_' + theUser.acStatus[0] + '&id=' + theUser.id + '&sname=' + theUser.sName + '&tkn=' + token + '&ent=' + theUser.entitlements.map(x => x.pkgId).join('_')
+      //});
 
-      var requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: raw,
-        redirect: 'follow'
-      };
+      //var requestOptions = {
+      //method: 'POST',
+      //headers: myHeaders,
+      //body: raw,
+      //redirect: 'follow'
+      //};
 
-      fetch("https://api-ssl.bitly.com/v4/shorten", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-          console.log(result);
-          setDynamicUrl(JSON.parse(result).link);
-        })
-        .catch(error => console.log('error', error));
+      //fetch("https://api-ssl.bitly.com/v4/shorten", requestOptions)
+      //.then(response => response.text())
+        //.then(result => {
+          //console.log(result);
+           //setDynamicUrl(JSON.parse(result).link);
+      //})
+      //.catch(error => console.log('error', error));
+
+      if (window.location.origin.indexOf('localhost') === -1) {
+        const apiUrl = '/api/getM3u';
+        const queryParams = new URLSearchParams({
+          sid: `${theUser.sid}_${theUser.acStatus[0]}`,
+          id: theUser.id,
+          sname: theUser.sName,
+          tkn: token,
+          ent: theUser.entitlements.map(x => x.pkgId).join('_'),
+        });
+
+        const longUrl = `${window.location.origin}${apiUrl}?${queryParams.toString()}`;
+
+        setDynamicUrl(longUrl);
+      } else {
+        setDynamicUrl("");
+      }
     }
+  }, [theUser, token]);
 
 
-  }, [theUser, token])
 
   const getOTP = () => {
     setLoading(true);
@@ -94,8 +109,6 @@ export default function Home() {
           let userDetails = res.data.userDetails;
           userDetails.id = res.data.userProfile.id;
           let token = res.data.accessToken;
-          userDetails.acStatus="ACTIVE";
-          console.log(JSON.stringify(userDetails))
           setUser(userDetails);
           setToken(token);
           localStorage.setItem("userDetails", JSON.stringify(userDetails));
@@ -132,12 +145,11 @@ export default function Home() {
       redirect: 'follow'
     };
 
-    fetch(window.location.origin + '/api/getM3u?sid=' + theUser.sid + '_' + 'A' + '&id=' + theUser.id + '&sname=' + theUser.sName + '&tkn=' + token, requestOptions)
+    fetch(window.location.origin + '/api/getM3u?sid=' + theUser.sid + '_' + theUser.acStatus[0] + '&id=' + theUser.id + '&sname=' + theUser.sName + '&tkn=' + token + '&ent=' + theUser.entitlements.map(x => x.pkgId).join('_'), requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);
         const data = result;
-        
         const blob = new Blob([data], { type: 'text/plain' });
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
@@ -175,64 +187,24 @@ export default function Home() {
                 <Grid.Column></Grid.Column>
                 <Grid.Column computer={8} tablet={12} mobile={16}>
                   <Segment loading={loading}>
-                    <Header as={'h1'}>Generate Tata Play m3u</Header>
+                    <Header as={'h1'}>Generate Tata Play IPTV (m3u) playlist</Header>
                     <Form>
-                      <Form.Group inline>
-                        <label>Login via </label>
-                        <Form.Field>
-                          <Radio
-                            label='OTP'
-                            name='loginTypeRadio'
-                            value='OTP'
-                            checked={loginType === 'OTP'}
-                            onChange={(e, { value }) => { setLoginType(value); }}
-                          />
-                        </Form.Field>
-                        <Form.Field>
-                          <Radio
-                            label='Password'
-                            name='loginTypeRadio'
-                            value='PWD'
-                            checked={loginType === 'PWD'}
-                            onChange={(e, { value }) => { setLoginType(value); }}
-                          />
-                        </Form.Field>
-                      </Form.Group>
-
+                      <Form.Field disabled={otpSent}>
+                        <label>RMN</label>
+                        <input value={rmn} placeholder='Registered Mobile Number' onChange={(e) => setRmn(e.currentTarget.value)} />
+                      </Form.Field>
+                      <Form.Field disabled={otpSent}>
+                        <label>Subscriber ID</label>
+                        <input value={sid} placeholder='Subscriber ID' onChange={(e) => setSid(e.currentTarget.value)} />
+                      </Form.Field>
+                      <Form.Field disabled={!otpSent}>
+                        <label>OTP</label>
+                        <input value={otp} placeholder='OTP' onChange={(e) => setOtp(e.currentTarget.value)} />
+                      </Form.Field>
                       {
-                        loginType === 'OTP' ?
-                          <>
-                            <Form.Field disabled={otpSent}>
-                              <label>RMN</label>
-                              <input value={rmn} placeholder='Registered Mobile Number' onChange={(e) => setRmn(e.currentTarget.value)} />
-                            </Form.Field>
-                            <Form.Field disabled={otpSent}>
-                              <label>Subscriber ID</label>
-                              <input value={sid} placeholder='Subscriber ID' onChange={(e) => setSid(e.currentTarget.value)} />
-                            </Form.Field>
-                            <Form.Field disabled={!otpSent}>
-                              <label>OTP</label>
-                              <input value={otp} placeholder='OTP' onChange={(e) => setOtp(e.currentTarget.value)} />
-                            </Form.Field>
-                            {
-                              otpSent ? <Button primary onClick={authenticateUser}>Login</Button> :
-                                <Button primary onClick={getOTP}>Get OTP</Button>
-                            }
-                          </>
-                          :
-                          <>
-                            <Form.Field>
-                              <label>Subscriber ID</label>
-                              <input value={sid} placeholder='Subscriber ID' onChange={(e) => setSid(e.currentTarget.value)} />
-                            </Form.Field>
-                            <Form.Field>
-                              <label>Password</label>
-                              <input type='password' value={pwd} placeholder='Password' onChange={(e) => setPwd(e.currentTarget.value)} />
-                            </Form.Field>
-                            <Button primary onClick={authenticateUser}>Login</Button>
-                          </>
+                        otpSent ? <Button primary onClick={authenticateUser}>Login</Button> :
+                          <Button primary onClick={getOTP}>Get OTP</Button>
                       }
-
                     </Form>
                   </Segment>
                 </Grid.Column>
@@ -245,11 +217,14 @@ export default function Home() {
                     <Header as="h1">Welcome, {theUser.sName}</Header>
                     {
                       theUser !== null ?
+                        dynamicUrl !== "" ?
                           <Message>
                             <Message.Header>Dynamic URL to get m3u: </Message.Header>
-                            {/* <Image centered src={'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(m3uMeta.url)} size='small' /> */}
+                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(dynamicUrl)}&size=small`} alt="QR Code" />
                             <p>
-                              <a href={dynamicUrl}>{dynamicUrl}</a>
+                              <div style={{ wordBreak: 'break-all' }}>
+                                <a href={dynamicUrl}>{dynamicUrl}</a>
+                              </div>
                             </p>
                             <p>
                               You can use the above m3u URL in OTT Navigator or Tivimate app to watch all your subscribed channels.
@@ -257,15 +232,18 @@ export default function Home() {
                             <p>
                               The generated m3u URL is for permanent use and is not required to be refreshed every 24 hours. Enjoy!
                             </p>
+                          </Message>
+                          :
+                          <Message>
                             <Message.Header>You cannot generate a permanent m3u file URL on localhost but you can download your m3u file: </Message.Header>
                             <p></p>
                             <p>
-                            <Button loading={downloading} primary onClick={() => downloadM3uFile('ts.m3u')}>Download m3u file</Button>
+                              <Button loading={downloading} primary onClick={() => downloadM3uFile('ts.m3u')}>Download m3u file</Button>
                             </p>
                             <p>The downloaded m3u file will be valid only for 24 hours.</p>
                           </Message>
                         :
-                        <Header as='h3' style={{ color: 'red' }}>Your Tata Sky User not found.</Header>
+                        <Header as='h3' style={{ color: 'red' }}>Your Tata Sky Connection is deactivated.</Header>
                     }
 
                     <Button negative onClick={logout}>Logout</Button>
@@ -289,7 +267,7 @@ export default function Home() {
           <Grid.Row>
             <Grid.Column></Grid.Column>
             <Grid.Column textAlign='center' computer={8} tablet={12} mobile={16}>
-              <a href="https://github.com/lalitjoshi06/tataplay_url" target="_blank" rel="noreferrer">View source code on Github</a>
+              <a href="https://github.com/saifshaikh1805/tata-sky-m3u" target="_blank" rel="noreferrer">View source code on Github</a>
             </Grid.Column>
             <Grid.Column></Grid.Column>
           </Grid.Row>
