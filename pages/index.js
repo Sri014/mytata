@@ -136,7 +136,6 @@ export default function Home() {
       .then(result => {
         console.log(result);
         const data = result;
-        return {data};
         const blob = new Blob([data], { type: 'text/plain' });
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
@@ -245,7 +244,7 @@ export default function Home() {
                     {
                       theUser !== null ?
                           <Message>
-                            <Message.Header>Dynamic URL to get m3u: + '{dynamicUrl}'</Message.Header>
+                            <Message.Header>Dynamic URL to get m3u: </Message.Header>
                             {/* <Image centered src={'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(m3uMeta.url)} size='small' /> */}
                             <p>
                               <a href={dynamicUrl}>{dynamicUrl}</a>
@@ -288,7 +287,7 @@ export default function Home() {
           <Grid.Row>
             <Grid.Column></Grid.Column>
             <Grid.Column textAlign='center' computer={8} tablet={12} mobile={16}>
-              <a href="https://github.com/saifshaikh1805/tata-sky-m3u" target="_blank" rel="noreferrer">View source code on Github</a>
+              <a href="https://github.com/lalitjoshi06/tataplay_url" target="_blank" rel="noreferrer">View source code on Github</a>
             </Grid.Column>
             <Grid.Column></Grid.Column>
           </Grid.Row>
