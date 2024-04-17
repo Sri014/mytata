@@ -27,6 +27,7 @@ export default function Home() {
     if (tok !== undefined && userd !== undefined) {
       setToken(tok);
       setUser(JSON.parse(userd));
+      console.log(tok);
     }
   }, []);
 
@@ -136,7 +137,7 @@ export default function Home() {
       .then(result => {
         console.log(result);
         const data = result;
-        console.log(result);
+        
         const blob = new Blob([data], { type: 'text/plain' });
         if (window.navigator.msSaveOrOpenBlob) {
           window.navigator.msSaveBlob(blob, filename);
