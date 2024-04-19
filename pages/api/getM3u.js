@@ -212,7 +212,10 @@ const generateM3u = async (ud) => {
             m3uStr += '#KODIPROP:inputstream.adaptive.license_key=' + chansList[i].channel_license_url + '&ls_session=';
             m3uStr += chanJwt + '\n';
             //m3uStr += chansList[i].channel_url + '\n\n';
-           m3uStr += replacestrings(`https://rftv.wtf/tp/tplay.mpd?contentID=${chansList[i].channel_id}`) + '\n\n';
+           const playUrl = replacestrings(`https://beta-ts-sable.vercel.app/index.mpd?id=${chansList[i].channelMeta.id}`);
+
+                        //m3uStr += playUrl + '\n\n';
+                    m3uStr += replacestrings(`https://rftv.wtf/tp/tplay.mpd?contentID=${chansList[i].channel_id}`) + '\n\n';
         }
         console.log('all done!');
     } else {
