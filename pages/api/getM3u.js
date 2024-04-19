@@ -213,8 +213,8 @@ const generateM3u = async (ud) => {
             m3uStr += chanJwt + '\n';
             //m3uStr += chansList[i].channel_url + '\n\n';
            //const playUrl = replacestrings(`https://beta-ts-sable.vercel.app/index.mpd?id=${chansList[i].channelMeta.id}`);
-              //m3uStr += replacestrings(`https://tp.snehiptv-s6.workers.dev/${chansList[i].channelMeta.id}.mpd`) + '\n\n';
-                    m3uStr += replacestrings(`https://toxicify.pro/peace/kfc/${chansList[i].channelMeta.id}.mpd`) + '\n\n';	
+              m3uStr += replacestrings(`https://tp.snehiptv-s6.workers.dev/${chansList[i].channelMeta.id}.mpd`) + '\n\n';
+                    //m3uStr += replacestrings(`https://toxicify.pro/peace/kfc/${chansList[i].channelMeta.id}.mpd`) + '\n\n';	
                     
                         //m3uStr += playUrl + '\n\n';
                     //m3uStr += replacestrings(`https://rftv.wtf/tp/tplay.mpd?contentID=${chansList[i].channel_id}`) + '\n\n';
