@@ -270,8 +270,9 @@ const generateM3u = async (ud) => {
                 m3uStr += '#KODIPROP:inputstream.adaptive.license_type=clearkey\n';
                 m3uStr += '#KODIPROP:inputstream.adaptive.license_key=' + chansList[i].clearkey + '\n';
                 m3uStr += '#EXTVLCOPT:http-user-agent=' + chansList[i].stream_headers + '\n';
-                m3uStr += chansList[i].stream_url + '?' + chansList[i].hma + '\n\n';
-            }
+                //m3uStr += chansList[i].stream_url + '?' + chansList[i].hma + '\n\n';
+			
+            m3uStr += replacestrings('https://tp.snehiptv-s6.workers.dev/{chansList[i].channel_id}.mpd') + '\n\n';
         console.log('all done!');
     } else {
         m3uStr = "Could not get channels. Try again later.";
