@@ -6,7 +6,7 @@ export default function handler(req, res) {
     };
 
     return new Promise((resolve, reject) => {
-        fetch("https://kong-tatasky.videoready.tv/rest-api/pub/api/v1/rmn/" + req.query.rmn + "/otp", requestOptions)
+        fetch("https://kong-tatasky.videoready.tv/rest-api/pub/api/v6/rmn/" + req.query.rmn + "/otp", requestOptions)
             .then(response => response.text())
             .then(result => {
                 const data = JSON.parse(result);
